@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Country Form </title>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body
+><div style="margin-left: 56px;background-color: lavenderblush;margin-right: 250px;">
+    <form  method="post" style="text-align: center;background-color: rgb(145, 168, 145);margin-top: 50px;padding-top: 100px;padding-bottom: 50px;">
+        <label for="name">Enter your Name:</label>
+        <input type="text" name="fname" required><br><br>
+        <label for="email">Enter your email:</label>
+        <input type="email" id="email" name="email"><br><br>
+       <label for="country">Select your Country:</label>
+        <select id="country" name="country">
+          <option value="">Choose Country</option>
+        </select><br><br>
+        <label for="region">Select your Region:</label>
+        <select id="region" name="country">
+          <option value="">Choose Region/State/Province</option>
+        </select><br><br><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
+         
+
+        <script>
+            var KEY = "31978891439fe6f9ce289267d03fd356";
+            function JavaScriptFetch() {
+                var script = document.createElement('script');
+                script.src = 'https://battuta.medunes.net/api/country/all/?key=4d3014bf10ff10581319f3a9a314117c&callback=country';
+                document.querySelector('head').appendChild(script);
+            }
+            
+            function processJSONPResponse(data) {
+                console.log(data);
+                
+                $.each(data, function (index, value) {
+          // APPEND OR INSERT DATA TO SELECT ELEMENT.
+          $("#country").append(
+            '<option value="' + value.code + '">' + value.name + "</option>"
+          );
+        });
+    
+        $("#country").change(function () {
+        selectedCountry = this.options[this.selectedIndex].text;
+        countryCode = $("#country").val();
+        // Populate country select box from battuta API
+        url =
+          "https://battuta.medunes.net/api/region/" +
+          countryCode +
+          "/all/?key=" +
+          KEY +
+          "&callback=?";
+        $.getJSON(url, function (data) {
+          $("#region option").remove();
+          $.each(data, function (index, value) {
+            // APPEND OR INSERT DATA TO SELECT ELEMENT.
+            $("#region").append(
+              '<option value="' + value.region + '">' + value.region + "</option>"
+            );
+          });
+        });
+      });
+               
+        }
+        </script>
+        <!--Reference to jQuery-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $("#reset").click(function (e) {
+                    location.reload();
+                });
+    
+                $("#jsonpButton").ready(function (e) {
+                    $.ajax({
+                        url: "https://battuta.medunes.net/api/country/all/?key=31978891439fe6f9ce289267d03fd356&callback=country",
+                        dataType: "jsonp",
+                        type: "POST",
+                        jsonpCallback: 'processJSONPResponse', // add this property
+                        contentType: "application/json; charset=utf-8",
+                        
+                    });
+                });
+            });
+        </script>
+</body>
+</html>
